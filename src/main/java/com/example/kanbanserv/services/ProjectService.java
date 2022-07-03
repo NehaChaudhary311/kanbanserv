@@ -12,7 +12,13 @@ public class ProjectService {
 
     // Update operation - tbd
 
-    public Project saveOrUpdateProject(Project project){
-        return projectRepository.save(project);
+    public Project saveOrUpdateProject(Project project) throws Exception {
+        if(projectRepository.existsByProjectIdentifier(project.getProjectIdentifier())) {
+            throw new Exception("Project ID already existing: " + project.getId());
+        }
+        else{
+            return projectRepository.save(project);
+        }
+
     }
 }

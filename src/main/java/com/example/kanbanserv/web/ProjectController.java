@@ -4,6 +4,7 @@ import com.example.kanbanserv.domain.Project;
 import com.example.kanbanserv.domain.error.Error;
 import com.example.kanbanserv.domain.error.ErrorDetails;
 import com.example.kanbanserv.services.ProjectService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/project")
+@Slf4j
 public class ProjectController {
 
     @Autowired
@@ -45,8 +47,18 @@ public class ProjectController {
                                                   .errorDetailsList(errorList)
                                                   .build(), HttpStatus.BAD_REQUEST);
         }
-        Project project1 = projectService.saveOrUpdateProject(project);
-        return new ResponseEntity<Project>(project, HttpStatus.CREATED);
+        try{
+            Project project1 = projectService.saveOrUpdateProject(project);
+            return new ResponseEntity<Project>(project, HttpStatus.CREATED);
+        }
+        catch(Exception e) {
+            log.error("Project couldn't be created", e);
+            return new ResponseEntity<Error>(Error.builder()
+                                                  .name("DUPLICATE_REQUEST")
+                                                  .message("Duplicate Project Identifier")
+                                                  .build(),HttpStatus.BAD_REQUEST );
+        }
+
     }
 
 }

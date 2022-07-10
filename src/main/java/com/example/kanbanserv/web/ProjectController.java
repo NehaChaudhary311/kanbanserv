@@ -3,6 +3,7 @@ package com.example.kanbanserv.web;
 import com.example.kanbanserv.domain.Project;
 import com.example.kanbanserv.domain.error.Error;
 import com.example.kanbanserv.domain.error.ErrorDetails;
+import com.example.kanbanserv.domain.exceptions.DuplicateIdentifierException;
 import com.example.kanbanserv.services.ProjectService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +52,7 @@ public class ProjectController {
             Project project1 = projectService.saveOrUpdateProject(project);
             return new ResponseEntity<Project>(project, HttpStatus.CREATED);
         }
-        catch(Exception e) {
+        catch(DuplicateIdentifierException e) {
             log.error("Project couldn't be created", e);
             return new ResponseEntity<Error>(Error.builder()
                                                   .name("DUPLICATE_REQUEST")
